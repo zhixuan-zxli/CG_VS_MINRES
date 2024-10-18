@@ -1,19 +1,20 @@
 import numpy as np
-from scipy import sparse as spr
+from scipy import sparse as sps
 
-def cg(A: spr.csc_matrix, b: np.ndarray, indef: bool, x_sol: np.ndarray = 0.0, reltol: float = 1e-8) -> None:
-    n, _ = A.shape
+def cg(A: sps.csc_matrix, b: np.ndarray, indef: bool, x_sol: np.ndarray = 0.0, reltol: float = 1e-8) -> np.ndarray:
+    n = A.shape[0]
     b = b.reshape(-1)
     b_norm = np.linalg.norm(b, ord=None) # 2-norm
-    nIter = n if indef else 5*n
-    stats = np.zeros((nIter, 4)) # statistics with columns (r norm, x norm, err, err_A)
+    maxIter = n if indef else 5*n
+    stats = np.zeros((maxIter, 4)) # statistics with columns (r norm, x norm, err, err_A)
     # initial values
     x = np.zeros((n, ))
     r = b.copy()
     rho = r @ r
     p = r.copy()
-    #
-    for m in range(nIter):
+    
+    for m in range(maxIter):
+        # udpate the iterate and the residual
         q = A @ p
         alpha = rho / (p@q)
         x += alpha * p
@@ -32,5 +33,6 @@ def cg(A: spr.csc_matrix, b: np.ndarray, indef: bool, x_sol: np.ndarray = 0.0, r
         beta = rho_next / rho
         p = r + beta * p
         rho = rho_next
+
     print("CG stops at iteration {} with relative residual {:.3e}".format(m, stats[m,0] / b_norm))
     return stats[:m+1]
