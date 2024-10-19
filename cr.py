@@ -25,7 +25,7 @@ def cr(A: sps.csc_matrix, b: np.ndarray, indef: bool, x_sol: np.ndarray = 0.0, r
         stats[m,1] = np.linalg.norm(x, ord=None)
         err = x - x_sol
         stats[m,2] = np.linalg.norm(err, ord=None)
-        stats[m,3] = np.sqrt(err @ (A@err))
+        stats[m,3] = np.sqrt(np.maximum(err @ (A@err), 0.0))
         # check for convergence
         if stats[m,0] <= reltol * b_norm:
             break

@@ -1,11 +1,11 @@
 import numpy as np
 from scipy import sparse as sps
 
-def cg(A: sps.csc_matrix, b: np.ndarray, indef: bool, x_sol: np.ndarray = 0.0, reltol: float = 1e-8) -> np.ndarray:
+def cg(A: sps.csc_matrix, b: np.ndarray, x_sol: np.ndarray = 0.0, reltol: float = 1e-8) -> np.ndarray:
     n = A.shape[0]
     b = b.reshape(-1)
     b_norm = np.linalg.norm(b, ord=None) # 2-norm
-    maxIter = n if indef else 5*n
+    maxIter = 5*n
     stats = np.zeros((maxIter, 4)) # statistics with columns (r norm, x norm, err, err_A)
     # initial values
     x = np.zeros((n, ))
